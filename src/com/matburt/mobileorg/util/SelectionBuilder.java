@@ -29,7 +29,7 @@ import java.util.Map;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteDatabase;
 import android.text.TextUtils;
 import android.util.Log;
 

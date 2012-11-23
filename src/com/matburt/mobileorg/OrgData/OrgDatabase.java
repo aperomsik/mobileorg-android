@@ -1,16 +1,18 @@
 package com.matburt.mobileorg.OrgData;
 
 import android.content.Context;
-import android.database.DatabaseUtils.InsertHelper;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteStatement;
+import net.sqlcipher.DatabaseUtils.InsertHelper;
+import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteOpenHelper;
+import net.sqlcipher.database.SQLiteStatement;
 
 import com.matburt.mobileorg.OrgData.OrgContract.OrgData;
 
 public class OrgDatabase extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "MobileOrg.db";
 	private static final int DATABASE_VERSION = 5;
+	
+	private String password = null;
 
 	private int orgdata_sourceNum;
 	private int orgdata_nameColumn;
@@ -117,7 +119,7 @@ public class OrgDatabase extends SQLiteOpenHelper {
 		
 	public void fastInsertNodePayload(Long id, final String payload) {
 		if(addPayloadStatement == null)
-			addPayloadStatement = getWritableDatabase()
+			addPayloadStatement = getWritableDatabase(password)
 					.compileStatement("UPDATE orgdata SET payload=? WHERE _id=?");
 		
 		addPayloadStatement.bindString(1, payload);
@@ -127,7 +129,7 @@ public class OrgDatabase extends SQLiteOpenHelper {
 	
 	private void prepareOrgdataInsert() {
 		if(this.orgdataInsertHelper == null) {
-			this.orgdataInsertHelper = new InsertHelper(getWritableDatabase(), Tables.ORGDATA);
+			this.orgdataInsertHelper = new InsertHelper(getWritableDatabase(password), Tables.ORGDATA);
 			this.orgdata_nameColumn = orgdataInsertHelper.getColumnIndex(OrgData.NAME);
 			this.orgdata_todoColumn = orgdataInsertHelper.getColumnIndex(OrgData.TODO);
 			this.orgdata_priorityColumn = orgdataInsertHelper.getColumnIndex(OrgData.PRIORITY);
@@ -145,11 +147,20 @@ public class OrgDatabase extends SQLiteOpenHelper {
 	}
 	
 	public void beginTransaction() {
-		getWritableDatabase().beginTransaction();
+		getWritableDatabase(password).beginTransaction();
 	}
 	
 	public void endTransaction() {
-		getWritableDatabase().setTransactionSuccessful();
-		getWritableDatabase().endTransaction();
+		getWritableDatabase(password).setTransactionSuccessful();
+		getWritableDatabase(password).endTransaction();
 	}
+	
+	public SQLiteDatabase getReadableDatabase() {
+		return getReadableDatabase(password);
+	}
+	
+	public SQLiteDatabase getWritableDatabase() {
+		return getWritableDatabase(password);
+	}
+
 }
