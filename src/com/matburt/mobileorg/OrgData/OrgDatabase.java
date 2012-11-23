@@ -1,5 +1,6 @@
 package com.matburt.mobileorg.OrgData;
 
+import com.matburt.mobileorg.util.OrgUtils;
 import android.content.Context;
 import net.sqlcipher.DatabaseUtils.InsertHelper;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -12,7 +13,7 @@ public class OrgDatabase extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "MobileOrg.db";
 	private static final int DATABASE_VERSION = 5;
 	
-	private String password = null;
+	private String password = OrgUtils.getDatabasePassword();
 
 	private int orgdata_sourceNum;
 	private int orgdata_nameColumn;
