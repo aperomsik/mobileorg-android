@@ -158,6 +158,10 @@
             android:name=".Settings.Synchronizers.UbuntuOneSettingsActivity"
             android:label="Ubuntu One Settings" >
         </activity>
+        <activity
+            android:name=".util.OrgDatabaseAuth"
+            android:label="MobileOrg database password" >
+        </activity>
 
         <service android:name=".Services.TimeclockService" >
         </service>

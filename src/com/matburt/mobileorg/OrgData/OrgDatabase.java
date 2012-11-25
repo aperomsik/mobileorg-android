@@ -1,5 +1,6 @@
 package com.matburt.mobileorg.OrgData;
 
+import com.matburt.mobileorg.util.OrgDatabaseAuth;
 import com.matburt.mobileorg.util.OrgUtils;
 import android.content.Context;
 import net.sqlcipher.DatabaseUtils.InsertHelper;
@@ -13,7 +14,7 @@ public class OrgDatabase extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "MobileOrg.db";
 	private static final int DATABASE_VERSION = 5;
 	
-	private String password = OrgUtils.getDatabasePassword();
+	private String password = null;
 
 	private int orgdata_sourceNum;
 	private int orgdata_nameColumn;
@@ -118,7 +119,15 @@ public class OrgDatabase extends SQLiteOpenHelper {
 		return orgdataInsertHelper.execute();
 	}
 		
+	private boolean havePassword() {
+		if (password == null)
+			password = OrgDatabaseAuth.getDatabasePassword();
+	    return password != null;
+	}
+	
 	public void fastInsertNodePayload(Long id, final String payload) {
+		if (!havePassword())
+			return;
 		if(addPayloadStatement == null)
 			addPayloadStatement = getWritableDatabase(password)
 					.compileStatement("UPDATE orgdata SET payload=? WHERE _id=?");
@@ -129,6 +138,8 @@ public class OrgDatabase extends SQLiteOpenHelper {
 	}
 	
 	private void prepareOrgdataInsert() {
+		if (!havePassword())
+			return;
 		if(this.orgdataInsertHelper == null) {
 			this.orgdataInsertHelper = new InsertHelper(getWritableDatabase(password), Tables.ORGDATA);
 			this.orgdata_nameColumn = orgdataInsertHelper.getColumnIndex(OrgData.NAME);
@@ -148,19 +159,27 @@ public class OrgDatabase extends SQLiteOpenHelper {
 	}
 	
 	public void beginTransaction() {
+		if (!havePassword())
+			return;
 		getWritableDatabase(password).beginTransaction();
 	}
 	
 	public void endTransaction() {
+		if (!havePassword())
+			return;
 		getWritableDatabase(password).setTransactionSuccessful();
 		getWritableDatabase(password).endTransaction();
 	}
 	
 	public SQLiteDatabase getReadableDatabase() {
+		if (!havePassword())
+			return null;
 		return getReadableDatabase(password);
 	}
 	
 	public SQLiteDatabase getWritableDatabase() {
+		if (!havePassword())
+			return null;
 		return getWritableDatabase(password);
 	}
 
