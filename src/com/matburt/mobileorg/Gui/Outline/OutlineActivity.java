@@ -122,6 +122,12 @@ public class OutlineActivity extends SherlockActivity {
 	}
 		
 	public void refreshDisplay() {
+            String password = OrgDatabaseAuth.getDatabasePassword();
+		if (password == null) {
+            Intent loginIntent = new Intent(this, OrgDatabaseAuth.class);
+            startActivityForResult(loginIntent, 0);
+			return;
+		}
 		this.listView.refresh();
 		refreshTitle();
 	}
@@ -131,6 +137,12 @@ public class OutlineActivity extends SherlockActivity {
 		this.getSupportActionBar().setTitle("MobileOrg " + getChangesString());
 	}
     
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    		if (OrgDatabaseAuth.getDatabasePassword() != null) {
+    			refreshDisplay();
+    		}
+     }
+
     private String getChangesString() {
     	int changes = OrgProviderUtils.getChangesCount(getContentResolver());
     	if(changes > 0)
