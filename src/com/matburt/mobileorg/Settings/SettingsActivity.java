@@ -131,7 +131,7 @@ SharedPreferences.OnSharedPreferenceChangeListener {
 		int sourceNum = prefsIntent.getIntExtra("source", -1);
 		int numSources = appSettings.getInt(KEY_NUM_SOURCES, 0);
 		
-		if (numSources < 2) {
+		if (numSources < 2 && sourceNum < 1) {
 			sourceNum = 1;
 		}
 		
