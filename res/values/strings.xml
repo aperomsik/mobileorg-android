@@ -207,5 +207,6 @@
     <string name="summary_scp_path">Full path to index.org on the server</string>
     <string name="title_index_file_path">Full local path to index.org</string>
     <string name="summary_web_url">Full URL path to your index.org file</string>
-
+    <string name="add_sync_source">Add another sync source</string>
+    
 </resources>

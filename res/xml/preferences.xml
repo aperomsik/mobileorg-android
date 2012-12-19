@@ -27,6 +27,10 @@
             android:key="autoSyncInterval"
             android:summary="@string/summary_auto_sync_interval"
             android:title="@string/title_auto_sync_interval" />
+        <PreferenceScreen
+            android:key="AddSource"
+            android:title="@string/add_sync_source" >
+        </PreferenceScreen>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preference_viewing" >
         <ListPreference

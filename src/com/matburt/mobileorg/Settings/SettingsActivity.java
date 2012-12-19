@@ -8,12 +8,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageItemInfo;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
+import android.util.AttributeSet;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.matburt.mobileorg.R;
@@ -38,14 +43,114 @@ SharedPreferences.OnSharedPreferenceChangeListener {
 	public static final String KEY_CALENDAR_NAME = "calendarName";
 	public static final String KEY_CALENDAR_REMINDER_INTERVAL = "calendarReminderInterval";
 	public static final String KEY_DO_AUTO_SYNC = "doAutoSync";
+	public static final String KEY_NUM_SOURCES = "numSources";
+	
+	public static String getSharedPreferencesName(int sourceNum) {
+		if (sourceNum < 2) {
+			return null;
+		} 
+		// not sure if this quite corresponds to default set, but should work anyway
+		return "com.matburt.mobileorg.prefsForSource" + sourceNum;
+	}
+	
+	public static SharedPreferences getSharedPreferences(Context context, int sourceNum) {
+		SharedPreferences sp;
+		String prefsName = getSharedPreferencesName(sourceNum);
+		
+		if (prefsName == null) {
+			sp = PreferenceManager.getDefaultSharedPreferences(context);
+		} else {
+			sp = context.getSharedPreferences(prefsName, MODE_PRIVATE);
+		}
+		
+		return sp;
+	}
+	
+	private class PreferenceButton extends Preference {
 
+		private int mSourceNum;
+		
+		public PreferenceButton(Context context, int sourceNum, boolean toAdd) {
+			super(context);
+			mSourceNum = sourceNum;
+
+			if (toAdd)
+				setTitle(R.string.add_sync_source);
+			else
+			    setTitle("" + sourceNum);
+		}
+		
+		public PreferenceButton(Context context) {
+		     this(context, 0, false);
+		}
+		
+
+		protected boolean shouldPersist() {
+			return false;
+		}
+		
+		protected void onClick() {
+			LaunchSettingsActivityForSource(mSourceNum);
+		}
+	}
+	
+	private void LaunchSettingsActivityForSource(int sourceNum) {
+		Intent i = new Intent(this, SettingsActivity.class);
+		i.putExtra("source", sourceNum);
+		startActivityForResult(i, sourceNum);
+		// somehow the child intent doesn't get the extras.
+		// need to try onNewIntent, but I'm not sure I get it.
+	}
+	
+	
+	
+	protected void onCreateSourceList(int numSources) {
+		// make a list of sources. should read their names and states from individual 
+		// pref mgrs, but to get the ball rolling just show some numbers.
+		PreferenceManager pm = getPreferenceManager();
+		PreferenceScreen ps = pm.createPreferenceScreen(getApplicationContext());
+		PreferenceButton b;
+		int i;
+		for (i = 1; i <= numSources; i ++) {
+		  b = new PreferenceButton(getApplicationContext(), i, i == numSources);
+		  ps.addPreference(b);
+		}
+		setPreferenceScreen(ps);
+	}
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		OrgUtils.setTheme(this);
 		super.onCreate(savedInstanceState);
 
+		SharedPreferences appSettings = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext());
+		
 		Intent prefsIntent = getIntent();
-		int resourceID = prefsIntent.getIntExtra("prefs", R.xml.preferences);
+		int sourceNum = prefsIntent.getIntExtra("source", -1);
+		int numSources = appSettings.getInt(KEY_NUM_SOURCES, 0);
+		
+		if (numSources < 2) {
+			sourceNum = 1;
+		}
+		
+		if (sourceNum < 1) {
+			onCreateSourceList(numSources);
+			return;
+		}
+		
+		if (sourceNum > numSources) {
+			Editor e = appSettings.edit();
+			e.putInt(KEY_NUM_SOURCES, sourceNum);
+			e.commit();
+		}
+		
+		String prefsName = this.getSharedPreferencesName(sourceNum);
+		if (prefsName != null) 
+			getPreferenceManager().setSharedPreferencesName(prefsName);
+				
+		// int resourceID = prefsIntent.getIntExtra("prefs", R.xml.preferences);
 		addPreferencesFromResource(R.xml.preferences);
 
 		populateSyncSources();
@@ -58,20 +163,33 @@ SharedPreferences.OnSharedPreferenceChangeListener {
 
 		findPreference("clearDB").setOnPreferenceClickListener(onClearDBClick);
 
-		SharedPreferences appSettings = PreferenceManager
-				.getDefaultSharedPreferences(getApplicationContext());
-		appSettings.registerOnSharedPreferenceChangeListener(this);
+		
+		Preference addPref = findPreference("AddSource");
+		if (sourceNum >= 2) {
+			getPreferenceScreen().removePreference(addPref);
+		} else {
+			addPref.setOnPreferenceClickListener(new OnPreferenceClickListener () {
+				@Override
+				public boolean onPreferenceClick(Preference preference) {
+					LaunchSettingsActivityForSource(2);
+					return true;
+				}
+			});
+		} 
+		
+		SharedPreferences sourceSettings = getSharedPreferences(getApplicationContext(), sourceNum);
+		sourceSettings.registerOnSharedPreferenceChangeListener(this);
 
 		// SynchronizerPreferences sync = (SynchronizerPreferences) findPreference(KEY_SYNC_PREF);
 		// sync.setParentActivity(this);
 
 		// Manually invoke so that settings are pre-loaded and sync preference is enabled or disabled as appropriate 
 		onSharedPreferenceChanged(appSettings, KEY_SYNC_SOURCE);
-		setPreferenceSummary(appSettings, KEY_AUTO_SYNC_INTERVAL);
-		setPreferenceSummary(appSettings, KEY_VIEW_RECURSION_MAX);
-		setPreferenceSummary(appSettings, KEY_DEFAULT_TODO);
-		setPreferenceSummary(appSettings, KEY_CALENDAR_NAME);
-		setPreferenceSummary(appSettings, KEY_CALENDAR_REMINDER_INTERVAL);
+		setPreferenceSummary(sourceSettings, KEY_AUTO_SYNC_INTERVAL);
+		setPreferenceSummary(sourceSettings, KEY_VIEW_RECURSION_MAX);
+		setPreferenceSummary(sourceSettings, KEY_DEFAULT_TODO);
+		setPreferenceSummary(sourceSettings, KEY_CALENDAR_NAME);
+		setPreferenceSummary(sourceSettings, KEY_CALENDAR_REMINDER_INTERVAL);
 	}
 
 	@Override
