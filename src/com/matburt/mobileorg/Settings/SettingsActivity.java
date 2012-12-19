@@ -111,8 +111,8 @@ SharedPreferences.OnSharedPreferenceChangeListener {
 		PreferenceScreen ps = pm.createPreferenceScreen(getApplicationContext());
 		PreferenceButton b;
 		int i;
-		for (i = 1; i <= numSources; i ++) {
-		  b = new PreferenceButton(getApplicationContext(), i, i == numSources);
+		for (i = 0; i <= numSources; i ++) {
+		  b = new PreferenceButton(getApplicationContext(), i + 1, i == numSources);
 		  ps.addPreference(b);
 		}
 		setPreferenceScreen(ps);
@@ -165,8 +165,8 @@ SharedPreferences.OnSharedPreferenceChangeListener {
 
 		
 		Preference addPref = findPreference("AddSource");
-		if (sourceNum >= 2) {
-			getPreferenceScreen().removePreference(addPref);
+		if (sourceNum >= 2 || numSources > 1) {
+			((PreferenceGroup)findPreference("sync_cat")).removePreference(addPref);
 		} else {
 			addPref.setOnPreferenceClickListener(new OnPreferenceClickListener () {
 				@Override
@@ -184,7 +184,7 @@ SharedPreferences.OnSharedPreferenceChangeListener {
 		// sync.setParentActivity(this);
 
 		// Manually invoke so that settings are pre-loaded and sync preference is enabled or disabled as appropriate 
-		onSharedPreferenceChanged(appSettings, KEY_SYNC_SOURCE);
+		onSharedPreferenceChanged(sourceSettings, KEY_SYNC_SOURCE);
 		setPreferenceSummary(sourceSettings, KEY_AUTO_SYNC_INTERVAL);
 		setPreferenceSummary(sourceSettings, KEY_VIEW_RECURSION_MAX);
 		setPreferenceSummary(sourceSettings, KEY_DEFAULT_TODO);
