@@ -71,7 +71,7 @@ public class WebDAVWizard extends Wizard {
 
 		Thread loginThread = new Thread() {
 			public void run() {
-				WebDAVSynchronizer wds = new WebDAVSynchronizer(context);
+				WebDAVSynchronizer wds = new WebDAVSynchronizer(context,getPreferences());
 				String extra = wds.testConnection(urlActual, userActual,
 						passActual);
 				if (extra != null) {

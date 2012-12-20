@@ -104,7 +104,7 @@ public class SSHWizard extends Wizard {
 
 		Thread loginThread = new Thread() {
 			public void run() {
-				SSHSynchronizer sds = new SSHSynchronizer(context);
+				SSHSynchronizer sds = new SSHSynchronizer(context, getPreferences());
 				String extra = sds.testConnection(pathActual, userActual,
 						passActual, hostActual, portActual, pubFileActual);
 				if (extra != null) {

@@ -64,7 +64,7 @@ public class UbuntuOneWizard extends Wizard {
 
 	private void loginUbuntuOne() {
 		final UbuntuOneSynchronizer uos = new UbuntuOneSynchronizer(
-				(Context) context);
+				(Context) context, getPreferences());
 		uos.username = ubuntuoneEmail.getText().toString();
 		uos.password = ubuntuonePass.getText().toString();
 
@@ -90,7 +90,7 @@ public class UbuntuOneWizard extends Wizard {
 		View view = LayoutInflater.from(context).inflate(
 				R.layout.wizard_folder_pick_list, null);
 
-		UbuntuOneSynchronizer uos = new UbuntuOneSynchronizer(context);
+		UbuntuOneSynchronizer uos = new UbuntuOneSynchronizer(context,getPreferences());
 		uos.getBaseUser();
 		UbuntuOneDirectoryBrowser directory = new UbuntuOneDirectoryBrowser(context, uos);
 

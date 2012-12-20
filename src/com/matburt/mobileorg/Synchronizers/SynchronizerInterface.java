@@ -13,7 +13,7 @@ public interface SynchronizerInterface {
 	 * is in a valid state.
 	 */
 	public boolean isConfigured();
-
+	
 	/**
 	 * Replaces the file on the remote end with the given content.
 	 * 

@@ -46,10 +46,8 @@ public class WebDAVSynchronizer implements SynchronizerInterface {
         }
 
         public boolean validateCertificate(int hash, String description) {
-            SharedPreferences appSettings = 
-                PreferenceManager.getDefaultSharedPreferences(this.c);
-            Editor edit = appSettings.edit();
-            int existingHash = appSettings.getInt("webCertHash", 0);
+            Editor edit = sharedPreferences.edit();
+            int existingHash = sharedPreferences.getInt("webCertHash", 0);
             if (existingHash == 0) {
                 Log.i("MobileOrg", "Storing new certificate");
                 edit.putInt("webCertHash", hash);
@@ -99,12 +97,12 @@ public class WebDAVSynchronizer implements SynchronizerInterface {
     private String password;
 	private Context context;
 	private Resources r;
+	private SharedPreferences sharedPreferences;
 	
-	public WebDAVSynchronizer(Context parentContext) {
+	public WebDAVSynchronizer(Context parentContext, SharedPreferences sp) {
 		this.context = parentContext;
 		this.r = context.getResources();
-		SharedPreferences sharedPreferences = PreferenceManager
-				.getDefaultSharedPreferences(parentContext);
+		sharedPreferences = sp;
 
 		this.remoteIndexPath = sharedPreferences.getString("webUrl", "");
 		this.remotePath = getRootUrl();

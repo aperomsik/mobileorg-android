@@ -74,20 +74,21 @@ private static final String BASE_TOKEN_NAME = "Ubuntu One @ MobileOrg:";
 
     private CommonsHttpOAuthConsumer consumer;
 	private Context context;    
+	private SharedPreferences srcSettings;
 
-    public UbuntuOneSynchronizer(Context context) {
+    public UbuntuOneSynchronizer(Context context, SharedPreferences sp) {
     	this.context = context;
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		this.remoteIndexPath = sharedPreferences.getString("ubuntuOnePath", "");
+    	this.srcSettings = sp;
+		this.remoteIndexPath = srcSettings.getString("ubuntuOnePath", "");
         //		this.remotePath = getRootUrl();
 
-		this.username = sharedPreferences.getString("ubuntuOneUser", "");
+		this.username = srcSettings.getString("ubuntuOneUser", "");
 		this.password = ""; //we don't store this, it's just set to be populated by wizard
 
-        consumer_key = sharedPreferences.getString("ubuntuConsumerKey", "");
-        consumer_secret = sharedPreferences.getString("ubuntuConsumerSecret", "");
-        access_token = sharedPreferences.getString("ubuntuAccessToken", "");
-        token_secret = sharedPreferences.getString("ubuntuTokenSecret", "");
+        consumer_key = srcSettings.getString("ubuntuConsumerKey", "");
+        consumer_secret = srcSettings.getString("ubuntuConsumerSecret", "");
+        access_token = srcSettings.getString("ubuntuAccessToken", "");
+        token_secret = srcSettings.getString("ubuntuTokenSecret", "");
     }
 
     public void invalidate() {
@@ -280,8 +281,7 @@ private static final String BASE_TOKEN_NAME = "Ubuntu One @ MobileOrg:";
             access_token = loginData.getString(ACCESS_TOKEN);
             token_secret = loginData.getString(TOKEN_SECRET);
 
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-            Editor edit = sharedPreferences.edit();
+            Editor edit = srcSettings.edit();
             edit.putString("ubuntuConsumerKey", consumer_key);
             edit.putString("ubuntuConsumerSecret", consumer_secret);
             edit.putString("ubuntuAccessToken", access_token);

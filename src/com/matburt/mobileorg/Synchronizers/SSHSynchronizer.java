@@ -32,9 +32,8 @@ public class SSHSynchronizer implements SynchronizerInterface {
 
 	private SharedPreferences appSettings;
 
-	public SSHSynchronizer(Context context) {
-		this.appSettings = PreferenceManager
-				.getDefaultSharedPreferences(context.getApplicationContext());
+	public SSHSynchronizer(Context context, SharedPreferences sp) {
+		this.appSettings = sp;
 		path = appSettings.getString("scpPath", "");
 		user = appSettings.getString("scpUser", "");
         host = appSettings.getString("scpHost", "");

@@ -93,7 +93,7 @@ public class OutlineActivity extends SherlockActivity {
 	}
 	
 	private void displayNewUserDialogs() {
-		if (OrgUtils.isSyncConfigured(this) == false)
+		if (OrgUtils.isSyncConfigured(this, -1) == false)
 			runShowWizard(null);
 
 		if (OrgUtils.isUpgradedVersion(this))

@@ -15,6 +15,7 @@ import com.matburt.mobileorg.Gui.SynchronizerNotification;
 import com.matburt.mobileorg.OrgData.MobileOrgApplication;
 import com.matburt.mobileorg.OrgData.OrgDatabase;
 import com.matburt.mobileorg.OrgData.OrgFileParser;
+import com.matburt.mobileorg.Settings.SettingsActivity;
 import com.matburt.mobileorg.Synchronizers.DropboxSynchronizer;
 import com.matburt.mobileorg.Synchronizers.NullSynchronizer;
 import com.matburt.mobileorg.Synchronizers.SDCardSynchronizer;
@@ -71,46 +72,56 @@ public class SyncService extends Service implements
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		String action = intent.getStringExtra(ACTION);
+		int sourceNum = intent.getIntExtra("source", -1);
 		if (action != null && action.equals(START_ALARM))
 			setAlarm();
 		else if (action != null && action.equals(STOP_ALARM))
 			unsetAlarm();
 		else if(!this.syncRunning) {
 			this.syncRunning = true;
-			runSynchronizer();
+			runSynchronizer(sourceNum);
 		}
 		return 0;
 	}
 
-    public Synchronizer getSynchronizer() {
+    public Synchronizer getSynchronizer(int sourceNum) {
         SynchronizerInterface synchronizer = null;
-		String syncSource = appSettings.getString("syncSource", "");
 		Context c = getApplicationContext();
+        SharedPreferences srcSettings = SettingsActivity.getSharedPreferences(c, sourceNum);
+		String syncSource = srcSettings.getString("syncSource", "");
+
 		
 		if (syncSource.equals("webdav"))
-			synchronizer =new WebDAVSynchronizer(c);
+			synchronizer =new WebDAVSynchronizer(c, srcSettings);
 		else if (syncSource.equals("sdcard"))
-			synchronizer = new SDCardSynchronizer(c);
+			synchronizer = new SDCardSynchronizer(c, srcSettings);
 		else if (syncSource.equals("dropbox"))
-			synchronizer = new DropboxSynchronizer(c);
+			synchronizer = new DropboxSynchronizer(c, srcSettings);
         else if (syncSource.equals("ubuntu")) {
-            synchronizer = new UbuntuOneSynchronizer(c);
+            synchronizer = new UbuntuOneSynchronizer(c, srcSettings);
             ((UbuntuOneSynchronizer)synchronizer).getBaseUser();
         }
 		else if (syncSource.equals("scp"))
-			synchronizer = new SSHSynchronizer(c);
+			synchronizer = new SSHSynchronizer(c, srcSettings);
         else if (syncSource.equals("null"))
             synchronizer = new NullSynchronizer();
 		else
 			synchronizer = null;
-		
+
 		return new Synchronizer(c, synchronizer,
 				new SynchronizerNotification(c));
     }
 
-	private void runSynchronizer() {
+	private void runSynchronizer(int sourceNum) {
+		
+		if (sourceNum == -1) {
+			// could loop over all sources, but
+			// alarm handling won't be quite right when sourceNum == -1
+			return;
+		}
+		
 		unsetAlarm();
-		final Synchronizer synchronizer = this.getSynchronizer();
+		final Synchronizer synchronizer = this.getSynchronizer(sourceNum);
 		final OrgDatabase db = new OrgDatabase(this);
 		final OrgFileParser parser = new OrgFileParser(db, getContentResolver());
 		final boolean calendarEnabled = appSettings.getBoolean("calendarEnabled", false);

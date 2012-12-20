@@ -34,19 +34,19 @@ public class DropboxSynchronizer implements SynchronizerInterface {
 	 
 	private DropboxAPI<AndroidAuthSession> dropboxApi;
 	private Context context;
+	private SharedPreferences srcSettings;
     
-    public DropboxSynchronizer(Context context) {
+    public DropboxSynchronizer(Context context, SharedPreferences sp) {
     	this.context = context;
+    	srcSettings = sp;
 
-		SharedPreferences sharedPreferences = PreferenceManager
-				.getDefaultSharedPreferences(context);
     	
-		this.remoteIndexPath = sharedPreferences.getString("dropboxPath", "");
+		this.remoteIndexPath = srcSettings.getString("dropboxPath", "");
 		if (!this.remoteIndexPath.startsWith("/")) {
 			this.remoteIndexPath = "/" + this.remoteIndexPath;
 		}
 
-		String dbPath = sharedPreferences.getString("dropboxPath","");
+		String dbPath = srcSettings.getString("dropboxPath","");
 		this.remotePath = dbPath.substring(0, dbPath.lastIndexOf("/")+1);
         connect();
     }
@@ -136,10 +136,8 @@ public class DropboxSynchronizer implements SynchronizerInterface {
      * @return Array of [access_key, access_secret], or null if none stored
      */
     private String[] getKeys() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
-                                          this.context.getApplicationContext());
-        String key = prefs.getString("dbPrivKey", null);
-        String secret = prefs.getString("dbPrivSecret", null);
+        String key = srcSettings.getString("dbPrivKey", null);
+        String secret = srcSettings.getString("dbPrivSecret", null);
         if (key != null && secret != null) {
         	String[] ret = new String[2];
         	ret[0] = key;

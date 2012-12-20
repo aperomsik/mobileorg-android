@@ -10,17 +10,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 public class SDCardSynchronizer implements SynchronizerInterface {	
 
 	private String remoteIndexPath;
 	private String remotePath;
+	private SharedPreferences srcPrefs;
 
-    public SDCardSynchronizer(Context context) {
-		this.remoteIndexPath = PreferenceManager.getDefaultSharedPreferences(
-				context).getString("indexFilePath", "");
-	
+    public SDCardSynchronizer(Context context, SharedPreferences sp) {
+    	srcPrefs = sp;
+		this.remoteIndexPath = srcPrefs.getString("indexFilePath", "");	
 		this.remotePath = new File(remoteIndexPath) + "/";
 	}
     

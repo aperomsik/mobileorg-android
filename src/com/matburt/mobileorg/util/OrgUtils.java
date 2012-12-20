@@ -30,6 +30,7 @@ import android.widget.Spinner;
 import com.matburt.mobileorg.R;
 import com.matburt.mobileorg.OrgData.OrgFile;
 import com.matburt.mobileorg.OrgData.OrgNode;
+import com.matburt.mobileorg.Settings.SettingsActivity;
 import com.matburt.mobileorg.Synchronizers.Synchronizer;
 
 public class OrgUtils {
@@ -69,8 +70,8 @@ public class OrgUtils {
 		return DEFAULT_FONTSIZE;
 	}
 	
-    public static boolean isSyncConfigured(Context context) {
-    	String syncSource = PreferenceManager.getDefaultSharedPreferences(context)
+    public static boolean isSyncConfigured(Context context, int sourceNum) {
+    	String syncSource = SettingsActivity.getSharedPreferences(context, sourceNum)
 		.getString("syncSource", "");
     	
     	if(TextUtils.isEmpty(syncSource))
