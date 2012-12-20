@@ -24,12 +24,16 @@ public class WizardActivity extends Activity implements RadioGroup.OnCheckedChan
 	private RadioGroup syncGroup;
 
 	private int syncWebDav, syncDropBox, syncUbuntuOne, syncSdCard, syncNull, syncSSH;
+	private int sourceNum = -1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		OrgUtils.setTheme(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.wizard);
+		
+		Intent prefsIntent = getIntent();
+		sourceNum = prefsIntent.getIntExtra("source", -1);
 		
 		wizardView = (WizardView) findViewById(R.id.wizard_parent);
 		// when wizard first starts can't go to next page
@@ -109,8 +113,8 @@ public class WizardActivity extends Activity implements RadioGroup.OnCheckedChan
 
 	@Override
 	public void onCheckedChanged(RadioGroup arg, int checkedId) {
-		this.activeWizard = Wizard.getWizard(getWizardType(checkedId), wizardView,
-				this);
+		this.activeWizard = Wizard.getWizard(getWizardType(checkedId),
+				sourceNum, wizardView, this);
 		// allow scrolling to next page
 		wizardView.enablePage(0);
 	}

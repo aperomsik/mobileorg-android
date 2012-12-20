@@ -162,7 +162,7 @@ SharedPreferences.OnSharedPreferenceChangeListener {
 		}
 
 		findPreference("clearDB").setOnPreferenceClickListener(onClearDBClick);
-
+		findPreference("runWizard").getIntent().putExtra("source", sourceNum);
 		
 		Preference addPref = findPreference("AddSource");
 		if (sourceNum >= 2 || numSources > 1) {
@@ -248,7 +248,8 @@ SharedPreferences.OnSharedPreferenceChangeListener {
 			return false;
 		}
 	};
-
+	
+	
 	private boolean isCalendarEnabled() {
 		return getPreferenceManager().getSharedPreferences().getBoolean(
 				"calendarEnabled", false);

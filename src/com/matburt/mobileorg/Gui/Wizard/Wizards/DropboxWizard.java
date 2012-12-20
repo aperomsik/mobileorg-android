@@ -142,8 +142,7 @@ public class DropboxWizard extends Wizard {
 
 	private void storeKeys(String key, String secret) {
 		// Save the access key for later
-		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(context);
+		SharedPreferences prefs = getPreferences();
 		Editor edit = prefs.edit();
 		
 		edit.putString("dbPrivKey", key);
@@ -153,8 +152,7 @@ public class DropboxWizard extends Wizard {
 
 	@Override
 	public void saveSettings() {
-		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(context);
+		SharedPreferences prefs = getPreferences();
 		Editor editor = prefs.edit();
 		
 		editor.putString("syncSource", "dropbox");

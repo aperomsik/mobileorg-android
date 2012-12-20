@@ -85,8 +85,7 @@ public class WebDAVWizard extends Wizard {
 	}
 	
 	public void saveSettings() {
-		SharedPreferences appSettings = PreferenceManager
-				.getDefaultSharedPreferences(context);
+		SharedPreferences appSettings = getPreferences();
 		SharedPreferences.Editor editor = appSettings.edit();
 		
 		editor.putString("syncSource", "webdav");

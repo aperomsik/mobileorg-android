@@ -2,10 +2,12 @@ package com.matburt.mobileorg.Gui.Wizard.Wizards;
 
 import com.matburt.mobileorg.R;
 import com.matburt.mobileorg.Gui.Wizard.WizardView;
+import com.matburt.mobileorg.Settings.SettingsActivity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -22,6 +24,8 @@ public abstract class Wizard {
 	protected UIHandler uiHandler;
 	protected ProgressDialog progress;
 
+	private int sourceNum = -1;
+	
 	public Wizard(WizardView wizardView, Context context) {
 		this.context = context;
 		this.wizardView = wizardView;
@@ -78,13 +82,22 @@ public abstract class Wizard {
 		uiHandler.sendMessage(msg);
 	}
 
+
+	// for use in saveSettings
+	protected final SharedPreferences getPreferences() {
+		return SettingsActivity.getSharedPreferences(context, sourceNum);
+	}
+	public void setSource (int num) {
+		sourceNum = num;
+	}
+	
 	public abstract void saveSettings();
 
 	public enum TYPE {
 		WebDAV, Dropbox, Ubuntu, SDCard, SSH, Null
 	};
 
-	public static Wizard getWizard(TYPE type, WizardView wizardView,
+	public static Wizard getWizard(TYPE type, int source, WizardView wizardView,
 			Context context) {
 		Wizard wizard;
 
@@ -118,6 +131,7 @@ public abstract class Wizard {
 			break;
 		}
 
+		wizard.setSource(source);
 		return wizard;
 	}
 }

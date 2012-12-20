@@ -3,7 +3,7 @@
 
     <PreferenceCategory android:title="@string/preference_synchronization" 
         android:key="sync_cat">
-        <Preference android:title="@string/rerun_setup_wizard" >
+        <Preference android:title="@string/rerun_setup_wizard" android:key="runWizard">
             <intent android:action="com.matburt.mobileorg.Settings.SETUP_WIZARD" />
         </Preference>
 
