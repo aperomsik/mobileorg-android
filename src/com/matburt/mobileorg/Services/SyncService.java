@@ -122,7 +122,7 @@ public class SyncService extends Service implements
 		
 		unsetAlarm();
 		final Synchronizer synchronizer = this.getSynchronizer(sourceNum);
-		final OrgDatabase db = new OrgDatabase(this);
+		final OrgDatabase db = new OrgDatabase(this, sourceNum);
 		final OrgFileParser parser = new OrgFileParser(db, getContentResolver());
 		final boolean calendarEnabled = appSettings.getBoolean("calendarEnabled", false);
 

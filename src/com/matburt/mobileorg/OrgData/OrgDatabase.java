@@ -33,9 +33,17 @@ public class OrgDatabase extends SQLiteOpenHelper {
 		String ORGDATA = "orgdata";
 	}
 	
-	public OrgDatabase(Context context) {
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+	public OrgDatabase(Context context, String databaseName) {
+		super(context, databaseName, null, DATABASE_VERSION);
 	}
+	
+	public OrgDatabase(Context context, int srcNum) {
+		this(context, srcNum <= 1 ? DATABASE_NAME : "MobileOrg" + srcNum + ".db");
+	}
+	
+	//public OrgDatabase(Context context) {
+	//	this(context, DATABASE_NAME);
+	//}
 	
 	@Override
 	public void onCreate(SQLiteDatabase db) {

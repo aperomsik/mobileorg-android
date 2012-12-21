@@ -69,10 +69,11 @@ public class FileDecryptionActivity extends Activity
 
 			String decryptedData = intent
 					.getStringExtra(FileDecryptionActivity.EXTRA_DECRYPTED_MESSAGE);
+			int sourceNum = intent.getIntExtra("source", -1); /* TODO: pass this */
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					new ByteArrayInputStream(decryptedData.getBytes())));
 
-			OrgDatabase db = new OrgDatabase(this);
+			OrgDatabase db = new OrgDatabase(this, sourceNum);
 			OrgFileParser parser = new OrgFileParser(db, getContentResolver());
 			parser.parse(new OrgFile(filename, name, checksum), reader, this);
 			db.close();

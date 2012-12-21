@@ -28,7 +28,9 @@ public class AgendaFragment extends SherlockFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
-		this.db = new OrgDatabase(getActivity()).getReadableDatabase();
+		/* TODO: pass source from caller */
+		int sourceNum = getActivity().getIntent().getIntExtra("source", -1);
+		this.db = new OrgDatabase(getActivity(), sourceNum).getReadableDatabase();
 
 		this.agendaList = new ListView(getActivity());
 		this.agendaList.setOnItemClickListener(agendaClickListener);

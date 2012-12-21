@@ -65,7 +65,7 @@ public class OrgProvider extends ContentProvider {
 	
 	@Override
 	public boolean onCreate() {
-		this.dbHelper = new OrgDatabase(getContext());
+		this.dbHelper = new OrgDatabase(getContext(), 0);
 		return false;
 	}
 	
