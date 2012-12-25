@@ -12,6 +12,7 @@ public class OrgDatabase extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "MobileOrg.db";
 	private static final int DATABASE_VERSION = 5;
 
+	private int orgdata_sourceNum;
 	private int orgdata_nameColumn;
 	private int orgdata_todoColumn;
 	private int orgdata_tagsColumn;
@@ -33,12 +34,13 @@ public class OrgDatabase extends SQLiteOpenHelper {
 		String ORGDATA = "orgdata";
 	}
 	
-	public OrgDatabase(Context context, String databaseName) {
+	private OrgDatabase(Context context, String databaseName) {
 		super(context, databaseName, null, DATABASE_VERSION);
 	}
 	
 	public OrgDatabase(Context context, int srcNum) {
 		this(context, srcNum <= 1 ? DATABASE_NAME : "MobileOrg" + srcNum + ".db");
+		orgdata_sourceNum = srcNum;
 	}
 	
 	//public OrgDatabase(Context context) {
@@ -140,6 +142,10 @@ public class OrgDatabase extends SQLiteOpenHelper {
 			this.orgdata_levelColumn = orgdataInsertHelper.getColumnIndex(OrgData.LEVEL);
 		}
 		orgdataInsertHelper.prepareForInsert();
+	}
+	
+	public int getSourceNum() {
+		return orgdata_sourceNum;
 	}
 	
 	public void beginTransaction() {
