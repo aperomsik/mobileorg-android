@@ -1,10 +1,14 @@
 package com.matburt.mobileorg.OrgData;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -18,8 +22,12 @@ import com.matburt.mobileorg.util.SelectionBuilder;
 
 public class OrgProvider extends ContentProvider {
 	public static final String AUTHORITY = OrgContract.CONTENT_AUTHORITY;
-	private OrgDatabase dbHelper;
+	private List<OrgDatabase> dbHelpers;
 	private static final UriMatcher uriMatcher = buildUriMatcher();
+	
+	private int sourceNum = 0;
+	
+	private static final int SOURCE = 77;
 	
 	private static final int ORGDATA = 100;
 	private static final int ORGDATA_ID = 101;
@@ -60,22 +68,44 @@ public class OrgProvider extends ContentProvider {
 		uriMatcher.addURI(AUTHORITY, "search/*", SEARCH);
 		uriMatcher.addURI(AUTHORITY, "timed/*", TIMED);
 
+		uriMatcher.addURI(AUTHORITY, "source", SOURCE);
+
+		
 		return uriMatcher;
 	}
 	
 	@Override
 	public boolean onCreate() {
-		this.dbHelper = new OrgDatabase(getContext(), 0);
+		this.dbHelpers = new ArrayList<OrgDatabase>();
 		return false;
 	}
 	
+	private OrgDatabase getDbHelper() {
+		OrgDatabase db;
+		
+		while (sourceNum >= dbHelpers.size()) {
+			dbHelpers.add(null);
+		}
+		
+		db = dbHelpers.get(sourceNum);
+		if (db == null) {
+			db = new OrgDatabase(getContext(), sourceNum);
+			dbHelpers.set(sourceNum, db);
+		}
+		return db;
+	}
 
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) {
-       final SQLiteDatabase db = dbHelper.getReadableDatabase();
+       final SQLiteDatabase db = getDbHelper().getReadableDatabase();
 
        final SelectionBuilder builder = buildSelectionFromUri(uri);
+       if (builder == null) { // source uri... only supported projection is activeSource
+    	   MatrixCursor m = new MatrixCursor(projection);
+    	   m.addRow(new Object[] { Integer.toString(this.sourceNum) });
+    	   return m;
+       }
        return builder.where(selection, selectionArgs).query(db, projection, sortOrder);
 	}
 
@@ -86,7 +116,7 @@ public class OrgProvider extends ContentProvider {
 		if(contentValues == null)
 			contentValues = new ContentValues();
 		
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		SQLiteDatabase db = getDbHelper().getWritableDatabase();
 		long rowId = db.insert(tableName, null, contentValues);
 
 		if (rowId > 0) {
@@ -100,8 +130,11 @@ public class OrgProvider extends ContentProvider {
 	
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {		
-		final SQLiteDatabase db = dbHelper.getWritableDatabase();
+		final SQLiteDatabase db = getDbHelper().getWritableDatabase();
 		final SelectionBuilder builder = buildSelectionFromUri(uri);
+		if (builder == null) {
+			return 0;
+		}
 		int count = builder.where(selection, selectionArgs).delete(db);
 		getContext().getContentResolver().notifyChange(uri, null);
 		return count;
@@ -110,8 +143,12 @@ public class OrgProvider extends ContentProvider {
 	@Override
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
-		final SQLiteDatabase db = dbHelper.getWritableDatabase();
+		final SQLiteDatabase db = getDbHelper().getWritableDatabase();
 		final SelectionBuilder builder = buildSelectionFromUri(uri);
+		if (builder == null) {
+			this.sourceNum = values.getAsInteger("activeSource");
+			return 1;
+		}
 		int count = builder.where(selection, selectionArgs).update(db, values);
 		getContext().getContentResolver().notifyChange(uri, null);
 		return count;
@@ -126,6 +163,8 @@ public class OrgProvider extends ContentProvider {
 	private SelectionBuilder buildSelectionFromUri(Uri uri) {
 		final SelectionBuilder builder = new SelectionBuilder();
 		switch (uriMatcher.match(uri)) {
+		case SOURCE:
+			return null;
 		case ORGDATA:
 			return builder.table(Tables.ORGDATA);
 		case ORGDATA_ID:
