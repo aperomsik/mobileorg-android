@@ -146,7 +146,7 @@ public class OrgProvider extends ContentProvider {
 		final SQLiteDatabase db = getDbHelper().getWritableDatabase();
 		final SelectionBuilder builder = buildSelectionFromUri(uri);
 		if (builder == null) {
-			this.sourceNum = values.getAsInteger("activeSource");
+			this.sourceNum = values.getAsInteger(OrgContract.SourceColumns.ACTIVESOURCE);
 			return 1;
 		}
 		int count = builder.where(selection, selectionArgs).update(db, values);

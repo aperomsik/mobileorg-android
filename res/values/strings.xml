@@ -7,6 +7,7 @@
     <string name="menu_capture">Capture</string>
     <string name="menu_capture_simple">Simple Capture</string>
     <string name="menu_settings">Settings</string>
+    <string name="menu_sources">Switch Source</string>    
     <string name="menu_sync">Sync</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_search">Search</string>

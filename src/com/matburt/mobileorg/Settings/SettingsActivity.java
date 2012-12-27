@@ -44,6 +44,9 @@ SharedPreferences.OnSharedPreferenceChangeListener {
 	public static final String KEY_CALENDAR_REMINDER_INTERVAL = "calendarReminderInterval";
 	public static final String KEY_DO_AUTO_SYNC = "doAutoSync";
 	public static final String KEY_NUM_SOURCES = "numSources";
+	public static final String KEY_ACTIVE_SOURCE = "activeSource";
+	
+	private boolean chooseSourceMode = false;
 	
 	public static String getSharedPreferencesName(int sourceNum) {
 		if (sourceNum < 2) {
@@ -90,16 +93,22 @@ SharedPreferences.OnSharedPreferenceChangeListener {
 		}
 		
 		protected void onClick() {
-			LaunchSettingsActivityForSource(mSourceNum);
+			SharedPreferences appSettings = PreferenceManager
+					.getDefaultSharedPreferences(getApplicationContext());
+			Editor e = appSettings.edit();
+			e.putInt(KEY_ACTIVE_SOURCE, mSourceNum);
+			e.commit();
+			if (chooseSourceMode)
+				finish();
+			else
+				LaunchSettingsActivityForSource(mSourceNum);
 		}
 	}
 	
 	private void LaunchSettingsActivityForSource(int sourceNum) {
 		Intent i = new Intent(this, SettingsActivity.class);
 		i.putExtra("source", sourceNum);
-		startActivityForResult(i, sourceNum);
-		// somehow the child intent doesn't get the extras.
-		// need to try onNewIntent, but I'm not sure I get it.
+		startActivity(i);
 	}
 	
 	
@@ -130,6 +139,7 @@ SharedPreferences.OnSharedPreferenceChangeListener {
 		Intent prefsIntent = getIntent();
 		int sourceNum = prefsIntent.getIntExtra("source", -1);
 		int numSources = appSettings.getInt(KEY_NUM_SOURCES, 0);
+		chooseSourceMode = prefsIntent.getBooleanExtra("chooseSource", false);
 		
 		if (numSources < 2 && sourceNum < 1) {
 			sourceNum = 1;
@@ -283,6 +293,20 @@ SharedPreferences.OnSharedPreferenceChangeListener {
 		defaultTodo.setEntryValues(todos);
 	}
 
+	public static int getNumConfiguredSources(Context c) {
+		SharedPreferences appSettings = PreferenceManager
+				.getDefaultSharedPreferences(c);
+		int numSources = appSettings.getInt(KEY_NUM_SOURCES, 0);
+		return numSources;
+	}
+
+	public static int getActiveSource(Context c) {
+		SharedPreferences appSettings = PreferenceManager
+				.getDefaultSharedPreferences(c);
+		int numSources = appSettings.getInt(KEY_ACTIVE_SOURCE, 0);
+		return numSources;
+	}
+	
 	protected void populateSyncSources() {
 		List<PackageItemInfo> synchronizers = discoverSynchronizerPlugins(this);
 

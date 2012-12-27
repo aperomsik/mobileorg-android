@@ -51,6 +51,10 @@ public class OrgContract {
 		String ID = "_id";
 		String NAME = "name";
 	}
+	
+	interface SourceColumns {
+		String ACTIVESOURCE = "activeSource";
+	}
 
 	public static final String CONTENT_AUTHORITY = "com.matburt.mobileorg.OrgData.OrgProvider";
 	private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
@@ -62,7 +66,7 @@ public class OrgContract {
 	private static final String PATH_PRIORITIES = "priorities";
 	private static final String PATH_FILES = "files";
 	private static final String PATH_SEARCH = "search";
-	
+	private static final String PATH_SOURCE = "source";
 	
 	public static class OrgData implements OrgDataColumns {
 		public static final Uri CONTENT_URI = 
@@ -165,5 +169,10 @@ public class OrgContract {
 		public static String getSearchTerm(Uri uri) {
 			return uri.getLastPathSegment();
 		}
+	}
+	
+	public static class Source implements SourceColumns {
+		public static final Uri CONTENT_URI = 
+				BASE_CONTENT_URI.buildUpon().appendPath(PATH_SOURCE).build();
 	}
 }

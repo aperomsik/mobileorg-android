@@ -73,6 +73,8 @@ public class SyncService extends Service implements
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		String action = intent.getStringExtra(ACTION);
 		int sourceNum = intent.getIntExtra("source", -1);
+		if (sourceNum == -1)
+			sourceNum = SettingsActivity.getActiveSource(getApplicationContext());
 		if (action != null && action.equals(START_ALARM))
 			setAlarm();
 		else if (action != null && action.equals(STOP_ALARM))

@@ -398,4 +398,10 @@ public class OrgProviderUtils {
 		
 		return result;
 	}
+	
+	public static void setActiveSource (int source, ContentResolver resolver) {
+		ContentValues values = new ContentValues();
+		values.put(OrgContract.SourceColumns.ACTIVESOURCE, source);
+		resolver.update(OrgContract.Source.CONTENT_URI, values, null, null);
+	}
 }

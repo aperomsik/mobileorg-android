@@ -33,6 +33,7 @@ public class OutlineActivity extends SherlockActivity {
 	private final static String OUTLINE_SCROLL_POS = "scrollPosition";
 
 	private Long node_id;
+	private int activeSource = -1;
 		
 	private OutlineListView listView;
 
@@ -57,8 +58,6 @@ public class OutlineActivity extends SherlockActivity {
 		this.syncReceiver = new SynchServiceReceiver();
 		registerReceiver(this.syncReceiver, new IntentFilter(
 				Synchronizer.SYNC_UPDATE));
-		
-		refreshDisplay();
 	}
 	
 	@Override
@@ -103,6 +102,16 @@ public class OutlineActivity extends SherlockActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		
+		int newSource = SettingsActivity.getActiveSource(this);
+		if (newSource != this.activeSource) {
+			activeSource = newSource;
+			// changed in settings, set it in the provider
+			OrgProviderUtils.setActiveSource(newSource, getContentResolver());
+			// do we need to change node_id?
+			refreshDisplay();
+		}
+		
 		refreshTitle();
 	}
 
@@ -173,6 +182,9 @@ public class OutlineActivity extends SherlockActivity {
 		case R.id.menu_help:
 			runHelp(null);
 			return true;
+			
+		case R.id.menu_sources:
+			runSelectSource();
 		}
 		return false;
 	}
@@ -183,6 +195,12 @@ public class OutlineActivity extends SherlockActivity {
     	startActivity(intent);
     }
     
+	public void runSelectSource() {
+		Intent intent = new Intent(this, SettingsActivity.class);
+		intent.putExtra("chooseSource", true);
+    	startActivity(intent);
+	}
+	
     public void runSynchronize(View view) {
 		startService(new Intent(this, SyncService.class));
     }
