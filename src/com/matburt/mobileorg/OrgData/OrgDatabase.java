@@ -43,10 +43,6 @@ public class OrgDatabase extends SQLiteOpenHelper {
 		orgdata_sourceNum = srcNum;
 	}
 	
-	//public OrgDatabase(Context context) {
-	//	this(context, DATABASE_NAME);
-	//}
-	
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL("CREATE TABLE IF NOT EXISTS files("

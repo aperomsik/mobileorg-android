@@ -17,6 +17,7 @@ import com.matburt.mobileorg.R;
 import com.matburt.mobileorg.OrgData.OrgDatabase;
 import com.matburt.mobileorg.OrgData.OrgFile;
 import com.matburt.mobileorg.OrgData.OrgFileParser;
+import com.matburt.mobileorg.Settings.SettingsActivity;
 
 public class FileDecryptionActivity extends Activity
 {
@@ -69,7 +70,7 @@ public class FileDecryptionActivity extends Activity
 
 			String decryptedData = intent
 					.getStringExtra(FileDecryptionActivity.EXTRA_DECRYPTED_MESSAGE);
-			int sourceNum = intent.getIntExtra("source", -1); /* TODO: pass this */
+			int sourceNum = SettingsActivity.getActiveSource(getApplicationContext());
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					new ByteArrayInputStream(decryptedData.getBytes())));
 

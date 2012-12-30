@@ -16,6 +16,7 @@ import com.matburt.mobileorg.R;
 import com.matburt.mobileorg.Gui.Outline.OutlineActionMode;
 import com.matburt.mobileorg.Gui.Outline.OutlineAdapter;
 import com.matburt.mobileorg.OrgData.OrgDatabase;
+import com.matburt.mobileorg.Settings.SettingsActivity;
 
 public class AgendaFragment extends SherlockFragment {
 
@@ -28,8 +29,7 @@ public class AgendaFragment extends SherlockFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
-		/* TODO: pass source from caller */
-		int sourceNum = getActivity().getIntent().getIntExtra("source", -1);
+		int sourceNum = SettingsActivity.getActiveSource(getActivity());
 		this.db = new OrgDatabase(getActivity(), sourceNum).getReadableDatabase();
 
 		this.agendaList = new ListView(getActivity());
