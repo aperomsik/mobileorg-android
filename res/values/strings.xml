@@ -209,5 +209,10 @@
     <string name="title_index_file_path">Full local path to index.org</string>
     <string name="summary_web_url">Full URL path to your index.org file</string>
     <string name="add_sync_source">Add another sync source</string>
-    
+    <string name="srctype_scp">SSH/SCP</string>
+    <string name="srctype_webdav">Webdav</string>
+    <string name="srctype_ubuntu">Ubuntu One</string>
+    <string name="srctype_dropbox">Dropbox</string>
+    <string name="srctype_sdcard">SD Card</string>
+    <string name="srctype_null">Capture only</string>
 </resources>

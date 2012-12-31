@@ -30,6 +30,12 @@ import com.matburt.mobileorg.Settings.Synchronizers.SDCardSettingsActivity;
 import com.matburt.mobileorg.Settings.Synchronizers.ScpSettingsActivity;
 import com.matburt.mobileorg.Settings.Synchronizers.UbuntuOneSettingsActivity;
 import com.matburt.mobileorg.Settings.Synchronizers.WebDAVSettingsActivity;
+import com.matburt.mobileorg.Synchronizers.DropboxSynchronizer;
+import com.matburt.mobileorg.Synchronizers.NullSynchronizer;
+import com.matburt.mobileorg.Synchronizers.SDCardSynchronizer;
+import com.matburt.mobileorg.Synchronizers.SSHSynchronizer;
+import com.matburt.mobileorg.Synchronizers.UbuntuOneSynchronizer;
+import com.matburt.mobileorg.Synchronizers.WebDAVSynchronizer;
 import com.matburt.mobileorg.util.OrgUtils;
 
 public class SettingsActivity extends SherlockPreferenceActivity implements
@@ -69,24 +75,45 @@ SharedPreferences.OnSharedPreferenceChangeListener {
 		return sp;
 	}
 	
-	private class PreferenceButton extends Preference {
+	private class SyncSourceButton extends Preference {
 
 		private int mSourceNum;
 		
-		public PreferenceButton(Context context, int sourceNum, boolean toAdd) {
+		public SyncSourceButton(Context context, int sourceNum, boolean toAdd) {
 			super(context);
 			mSourceNum = sourceNum;
 
 			if (toAdd)
 				setTitle(R.string.add_sync_source);
 			else
-			    setTitle("" + sourceNum);
+			    setTitleAndSummary(context);
 		}
 		
-		public PreferenceButton(Context context) {
-		     this(context, 0, false);
+		private void setTitleAndSummary(Context context) {
+			SharedPreferences srcPrefs = SettingsActivity.getSharedPreferences(context, mSourceNum);
+			String syncSource = srcPrefs.getString(KEY_SYNC_SOURCE, "");
+			
+			if (syncSource.equals("webdav")) {
+				setTitle(R.string.srctype_webdav);
+				setSummary(srcPrefs.getString("webUrl", ""));
+			} else if (syncSource.equals("sdcard")) {
+				setTitle(R.string.srctype_sdcard);
+				setSummary(srcPrefs.getString("indexFilePath", ""));
+			} else if (syncSource.equals("dropbox")) {
+				setTitle(R.string.srctype_dropbox);
+				setSummary(srcPrefs.getString("dropboxPath", ""));
+			} else if (syncSource.equals("ubuntu")) {
+				setTitle(R.string.srctype_ubuntu);
+				setSummary(srcPrefs.getString("ubuntuOnePath", ""));
+	        }
+			else if (syncSource.equals("scp")) {
+				setTitle(getString(R.string.srctype_scp) + ": " + 
+						 srcPrefs.getString("scpHost", ""));
+				setSummary(srcPrefs.getString("scpPath", ""));
+			} else /* if (syncSource.equals("null")) */ {
+				setTitle(R.string.srctype_null);
+			} 
 		}
-		
 
 		protected boolean shouldPersist() {
 			return false;
@@ -118,10 +145,14 @@ SharedPreferences.OnSharedPreferenceChangeListener {
 		// pref mgrs, but to get the ball rolling just show some numbers.
 		PreferenceManager pm = getPreferenceManager();
 		PreferenceScreen ps = pm.createPreferenceScreen(getApplicationContext());
-		PreferenceButton b;
+		SyncSourceButton b;
 		int i;
+		if (chooseSourceMode)
+			setTitle(R.string.menu_sources);
 		for (i = 0; i <= numSources; i ++) {
-		  b = new PreferenceButton(getApplicationContext(), i + 1, i == numSources);
+		  if (i == numSources && chooseSourceMode)
+			  continue;
+		  b = new SyncSourceButton(getApplicationContext(), i + 1, i == numSources);
 		  ps.addPreference(b);
 		}
 		setPreferenceScreen(ps);
