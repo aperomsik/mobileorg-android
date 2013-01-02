@@ -28,8 +28,8 @@ public class SSHWizard extends Wizard {
 	
 	private TextView sshPubFileActual;
 
-	public SSHWizard(WizardView wizardView, Context context) {
-		super(wizardView, context);
+	public SSHWizard(WizardView wizardView, Context context, int source) {
+		super(wizardView, context, source);
 	}
 	
 
@@ -122,8 +122,7 @@ public class SSHWizard extends Wizard {
 	}
 	
 	private void loadSettings() {
-		SharedPreferences appSettings = PreferenceManager
-				.getDefaultSharedPreferences(context);
+		SharedPreferences appSettings = getPreferences();
 		sshPath.setText(appSettings.getString("scpPath", ""));
 		sshUser.setText(appSettings.getString("scpUser", ""));
 		sshPass.setText(appSettings.getString("scpPass", ""));

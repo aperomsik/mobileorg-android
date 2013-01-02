@@ -33,8 +33,8 @@ public class DropboxWizard extends Wizard {
 	private boolean dropboxLoginAttempted = false;
 	private Button loginButton;
 
-	public DropboxWizard(WizardView wizardView, Context context) {
-		super(wizardView, context);
+	public DropboxWizard(WizardView wizardView, Context context, int source) {
+		super(wizardView, context, source);
 	}
 	
 

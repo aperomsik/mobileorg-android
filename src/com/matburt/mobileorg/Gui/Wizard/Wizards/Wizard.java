@@ -26,9 +26,10 @@ public abstract class Wizard {
 
 	private int sourceNum = -1;
 	
-	public Wizard(WizardView wizardView, Context context) {
+	public Wizard(WizardView wizardView, Context context, int source) {
 		this.context = context;
 		this.wizardView = wizardView;
+		this.sourceNum = source;
 
 		progress = new ProgressDialog(context);
 		progress.setMessage(context.getString(R.string.please_wait));
@@ -87,9 +88,6 @@ public abstract class Wizard {
 	protected final SharedPreferences getPreferences() {
 		return SettingsActivity.getSharedPreferences(context, sourceNum);
 	}
-	public void setSource (int num) {
-		sourceNum = num;
-	}
 	
 	public abstract void saveSettings();
 
@@ -103,35 +101,34 @@ public abstract class Wizard {
 
 		switch (type) {
 		case WebDAV:
-			wizard = new WebDAVWizard(wizardView, context);
+			wizard = new WebDAVWizard(wizardView, context, source);
 			break;
 
 		case Dropbox:
-			wizard = new DropboxWizard(wizardView, context);
+			wizard = new DropboxWizard(wizardView, context, source);
 			break;
 
 		case Ubuntu:
-			wizard = new UbuntuOneWizard(wizardView, context);
+			wizard = new UbuntuOneWizard(wizardView, context, source);
 			break;
 
 		case SDCard:
-			wizard = new SDCardWizard(wizardView, context);
+			wizard = new SDCardWizard(wizardView, context, source);
 			break;
 
 		case SSH:
-			wizard = new SSHWizard(wizardView, context);
+			wizard = new SSHWizard(wizardView, context, source);
 			break;
 
 		case Null:
-			wizard = new NullWizard(wizardView, context);
+			wizard = new NullWizard(wizardView, context, source);
 			break;
 
 		default:
-			wizard = new NullWizard(wizardView, context);
+			wizard = new NullWizard(wizardView, context, source);
 			break;
 		}
 
-		wizard.setSource(source);
 		return wizard;
 	}
 }

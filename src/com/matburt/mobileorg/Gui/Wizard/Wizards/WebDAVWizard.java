@@ -20,8 +20,8 @@ public class WebDAVWizard extends Wizard {
 	private EditText webdavPass;
 	private EditText webdavUrl;
 
-	public WebDAVWizard(WizardView wizardView, Context context) {
-		super(wizardView, context);
+	public WebDAVWizard(WizardView wizardView, Context context, int source) {
+		super(wizardView, context, source);
 	}
 	
 

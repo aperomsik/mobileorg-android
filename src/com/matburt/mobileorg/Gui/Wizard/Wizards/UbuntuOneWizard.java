@@ -27,8 +27,8 @@ public class UbuntuOneWizard extends Wizard {
 
 	private FolderAdapter directoryAdapter;
 
-	public UbuntuOneWizard(WizardView wizardView, Context context) {
-		super(wizardView, context);
+	public UbuntuOneWizard(WizardView wizardView, Context context, int source) {
+		super(wizardView, context, source);
 	}
 	
 

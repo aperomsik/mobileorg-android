@@ -17,8 +17,8 @@ public class SDCardWizard extends Wizard {
 	
 	private FolderAdapter directoryAdapter;
 
-	public SDCardWizard(WizardView wizardView, Context context) {
-		super(wizardView, context);
+	public SDCardWizard(WizardView wizardView, Context context, int source) {
+		super(wizardView, context, source);
 	}
 	
 
@@ -28,10 +28,16 @@ public class SDCardWizard extends Wizard {
 	}
 	
 	public View createSDcardFolderSelector() {		
+		SharedPreferences appSettings = getPreferences();
+		String prevPath = appSettings.getString("indexFilePath", "");
+
 		View view = LayoutInflater.from(context).inflate(
 				R.layout.wizard_folder_pick_list, null);
 
 		LocalDirectoryBrowser directory = new LocalDirectoryBrowser(context);
+		// not quite right, should browse to parent and select the subfolder
+		// if (!prevPath.equals(""))
+		//	directory.browseTo(prevPath);
 		directoryAdapter = new FolderAdapter(context, R.layout.folder_adapter_row,
 				directory.listFiles());
 		directoryAdapter
@@ -47,6 +53,7 @@ public class SDCardWizard extends Wizard {
 		wizardView.setNavButtonStateOnPage(1, true, WizardView.LAST_PAGE);
 		return view;
 	}
+	
 	
 	public void saveSettings() {
 		SharedPreferences appSettings = getPreferences();

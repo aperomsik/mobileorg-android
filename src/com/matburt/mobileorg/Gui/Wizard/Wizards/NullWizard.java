@@ -11,8 +11,8 @@ import android.view.View;
 
 public class NullWizard extends Wizard {
 
-	public NullWizard(WizardView wizardView, Context context) {
-		super(wizardView, context);
+	public NullWizard(WizardView wizardView, Context context, int source) {
+		super(wizardView, context, source);
 	}
 	
 

@@ -54,12 +54,10 @@ public class WizardActivity extends Activity implements RadioGroup.OnCheckedChan
 		ViewTreeObserver observer = wizardView.getViewTreeObserver();
 		if (observer.isAlive()) { 
 		  observer.addOnGlobalLayoutListener(this);
-		}
 	}
 
-	private void selectPrevSource(Context context) {
-		SharedPreferences srcPrefs = PreferenceManager
-				.getDefaultSharedPreferences(context);
+	private void selectPrevSource(Context context, RadioGroup syncGroup) {
+		SharedPreferences srcPrefs = SettingsActivity.getSharedPreferences(context, sourceNum);
 		String syncSource = srcPrefs.getString("syncSource", "");
 		
 		int id = -1;
@@ -74,7 +72,7 @@ public class WizardActivity extends Activity implements RadioGroup.OnCheckedChan
 			id = syncDropBox;
 		else if (syncSource.equals("ubuntu")) 
 			id = syncUbuntuOne;
-        else if (syncSource.equals("scp")) 
+		else if (syncSource.equals("scp")) 
 			id = syncSSH;
 		else if (syncSource.equals("null")) 
 			id = syncNull;		
