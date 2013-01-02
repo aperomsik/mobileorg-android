@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageItemInfo;
 import android.content.pm.ResolveInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -19,6 +20,9 @@ import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.util.AttributeSet;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.matburt.mobileorg.R;
@@ -78,6 +82,7 @@ SharedPreferences.OnSharedPreferenceChangeListener {
 	private class SyncSourceButton extends Preference {
 
 		private int mSourceNum;
+		private boolean usingDarkTheme = false;
 		
 		public SyncSourceButton(Context context, int sourceNum, boolean toAdd) {
 			super(context);
@@ -87,6 +92,8 @@ SharedPreferences.OnSharedPreferenceChangeListener {
 				setTitle(R.string.add_sync_source);
 			else
 			    setTitleAndSummary(context);
+			
+			usingDarkTheme = OrgUtils.getThemeName(context).equals("Dark");
 		}
 		
 		private void setTitleAndSummary(Context context) {
@@ -117,6 +124,19 @@ SharedPreferences.OnSharedPreferenceChangeListener {
 
 		protected boolean shouldPersist() {
 			return false;
+		}
+		
+		// @override
+		protected View onCreateView(ViewGroup parent) {
+			View v = super.onCreateView(parent);
+			if (!usingDarkTheme) {
+				// work around bug that causes title to be white and thus invisible
+				// when using the light theme. Clue acquired via 
+				// http://udinic.wordpress.com/2011/08/18/dress-up-your-preferenceactivity/
+				TextView title = (TextView) v.findViewById(android.R.id.title);
+				title.setTextColor(Color.BLACK);
+			}
+			return v;
 		}
 		
 		protected void onClick() {
