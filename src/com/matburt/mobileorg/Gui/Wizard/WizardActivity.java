@@ -54,9 +54,10 @@ public class WizardActivity extends Activity implements RadioGroup.OnCheckedChan
 		ViewTreeObserver observer = wizardView.getViewTreeObserver();
 		if (observer.isAlive()) { 
 		  observer.addOnGlobalLayoutListener(this);
+		}
 	}
 
-	private void selectPrevSource(Context context, RadioGroup syncGroup) {
+	private void selectPrevSource(Context context) {
 		SharedPreferences srcPrefs = SettingsActivity.getSharedPreferences(context, sourceNum);
 		String syncSource = srcPrefs.getString("syncSource", "");
 		
