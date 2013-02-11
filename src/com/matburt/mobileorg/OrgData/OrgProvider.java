@@ -101,6 +101,10 @@ public class OrgProvider extends ContentProvider {
 			String[] selectionArgs, String sortOrder) {
        final SQLiteDatabase db = getDbHelper().getReadableDatabase();
 
+       if (db == null) {
+    	   return null;
+       }
+       
        final SelectionBuilder builder = buildSelectionFromUri(uri);
        if (builder == null) { // source uri... only supported projection is activeSource
     	   MatrixCursor m = new MatrixCursor(projection);

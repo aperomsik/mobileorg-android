@@ -379,6 +379,9 @@ public class OrgProviderUtils {
 		Cursor childCursor = resolver.query(OrgData.buildChildrenUri(nodeId),
 				OrgData.DEFAULT_COLUMNS, null, null, sort);
 		
+		if (childCursor == null)
+			return null;
+		
 		ArrayList<OrgNode> result = orgDataCursorToArrayList(childCursor);
 		childCursor.close();
 		return result;

@@ -36,8 +36,11 @@ public class OutlineAdapter extends ArrayAdapter<OrgNode> {
 	public void init() {
 		clear();
 		
-		for (OrgNode node : OrgProviderUtils.getOrgNodeChildren(-1, resolver))
-			add(node);
+		ArrayList<OrgNode> nodes = OrgProviderUtils.getOrgNodeChildren(-1, resolver);
+		
+		if (nodes != null)
+		    for (OrgNode node : nodes)
+			    add(node);
 		
 		notifyDataSetInvalidated();
 	}
