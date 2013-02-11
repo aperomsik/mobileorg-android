@@ -23,6 +23,7 @@ import com.matburt.mobileorg.OrgData.OrgProviderUtils;
 import com.matburt.mobileorg.Services.SyncService;
 import com.matburt.mobileorg.Settings.SettingsActivity;
 import com.matburt.mobileorg.Synchronizers.Synchronizer;
+import com.matburt.mobileorg.util.OrgDatabaseAuth;
 import com.matburt.mobileorg.util.OrgUtils;
 
 public class OutlineActivity extends SherlockActivity {

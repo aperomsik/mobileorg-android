@@ -1,6 +1,6 @@
 package com.matburt.mobileorg.Gui.Agenda;
 
-import android.database.sqlite.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
